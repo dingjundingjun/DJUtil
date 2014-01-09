@@ -1,7 +1,10 @@
 package com.dj.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +27,9 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		init();
+		Log.d(TAG, "wifi mac ==>" + getLocalMacAddress());
 	}
+	
 	
 	private void init()
 	{
@@ -78,5 +83,12 @@ public class MainActivity extends Activity
 			nameTextView.setText(Util.intentActions[position][0]);
 			return convertView;
 		}
+	}
+	
+	 public String getLocalMacAddress() 
+    {
+		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		WifiInfo info = wifi.getConnectionInfo();
+		return info.getMacAddress();
 	}
 }
