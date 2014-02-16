@@ -63,6 +63,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity 
+            android:name="com.dj.util.RotateActivity"
+            >
+            <intent-filter>
+                <action android:name="com.dj.action.ROTATE_LAYOUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            </activity>
     </application>
 
 </manifest>

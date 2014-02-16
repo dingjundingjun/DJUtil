@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+	
+    <com.dj.util.AnimationLayout
+        android:id="@+id/testlayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dip"
+        android:background="@android:color/background_dark"
+        android:layout_alignParentBottom="true"
+        android:focusable="false"
+        >
+        <Button 
+            android:id="@+id/leftanimation"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:text="left_animation"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/holo_red_dark"
+            android:layout_marginLeft="100dip"
+            />
+        <Button 
+            android:id="@+id/rightanimation"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:text="right_animation"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginRight="100dip"
+            />
+        </com.dj.util.AnimationLayout>
+</RelativeLayout>
