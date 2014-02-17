@@ -20,4 +20,6 @@
     <string name="describe_dragviews">拖动控件</string>
 	<string name="action_qrcode">com.dj.action.QRCODE</string>
     <string name="qrcode">二维码识别</string>
+    <string name="action_rotate_layout">com.dj.action.ROTATE_LAYOUT</string>
+    <string name="rotate_layout">布局转动</string>
 </resources>
