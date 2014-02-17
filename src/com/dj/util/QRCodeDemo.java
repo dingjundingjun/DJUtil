@@ -112,7 +112,16 @@ public class QRCodeDemo extends Activity
         }  
     };  
     
-    private void YUVRotate90(byte[] src,byte[] des,int width,int height) 
+    
+    @Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		
+	}
+
+
+	private void YUVRotate90(byte[] src,byte[] des,int width,int height) 
     { 
     	/*int i=0,j=0,n=0; 
     	int hw=width/4,hh=height/4; 

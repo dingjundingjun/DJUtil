@@ -51,6 +51,16 @@ public class MainActivity extends Activity
 		});
 	}
 	
+	
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+	}
+
+
+
 	public class ChooseAdapter extends BaseAdapter
 	{
 		@Override

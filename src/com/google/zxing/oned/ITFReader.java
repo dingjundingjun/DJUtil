@@ -38,6 +38,7 @@ import java.util.Hashtable;
  *
  * @author kevin.osullivan@sita.aero, SITA Lab.
  */
+//ITF 条码
 public final class ITFReader extends OneDReader {
 
   private static final int MAX_AVG_VARIANCE = (int) (PATTERN_MATCH_RESULT_SCALE_FACTOR * 0.42f);

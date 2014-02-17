@@ -16,6 +16,8 @@
 
 package com.google.zxing;
 
+import android.util.Log;
+
 import com.google.zxing.datamatrix.DataMatrixReader;
 import com.google.zxing.oned.MultiFormatOneDReader;
 import com.google.zxing.pdf417.PDF417Reader;
@@ -36,7 +38,7 @@ public final class MultiFormatReader implements Reader {
 
   private Hashtable hints;
   private Vector readers;
-
+  private String TAG = "MultiFormatReader";
   /**
    * This version of decode honors the intent of Reader.decode(BinaryBitmap) in that it
    * passes null as a hint to the decoders. However, that makes it inefficient to call repeatedly.
@@ -124,13 +126,14 @@ public final class MultiFormatReader implements Reader {
         readers.addElement(new MultiFormatOneDReader(hints));
       }
     }
+    Log.d(TAG, "readers.isEmpty==>" + readers.isEmpty());
     if (readers.isEmpty()) {
       if (!tryHarder) {
-        readers.addElement(new MultiFormatOneDReader(hints));
+        readers.addElement(new MultiFormatOneDReader(hints));    //条码识别
       }
       readers.addElement(new QRCodeReader());
 
-      readers.addElement(new DataMatrixReader());
+      readers.addElement(new DataMatrixReader());    //二维码的一种
 
       // TODO: Enable once PDF417 has passed QA
       //readers.addElement(new PDF417Reader());

@@ -16,6 +16,8 @@
 
 package com.google.zxing.oned;
 
+import android.util.Log;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
@@ -42,7 +44,7 @@ public abstract class OneDReader implements Reader {
 
   protected static final int INTEGER_MATH_SHIFT = 8;
   protected static final int PATTERN_MATCH_RESULT_SCALE_FACTOR = 1 << INTEGER_MATH_SHIFT;
-
+  private String TAG = "OneDReader";
   public Result decode(BinaryBitmap image) throws NotFoundException, FormatException {
     return decode(image, null);
   }
@@ -100,10 +102,10 @@ public abstract class OneDReader implements Reader {
     int width = image.getWidth();
     int height = image.getHeight();
     BitArray row = new BitArray(width);
-
+    Log.d(TAG, "doDecode width==>" + width + " height==>" + height);
     int middle = height >> 1;
     boolean tryHarder = hints != null && hints.containsKey(DecodeHintType.TRY_HARDER);
-    int rowStep = Math.max(1, height >> (tryHarder ? 8 : 5));
+    int rowStep = Math.max(1, height >> (tryHarder ? 8 : 5));    //tryHarder 默认为5   rowSetp和 32比
     int maxLines;
     if (tryHarder) {
       maxLines = height; // Look at the whole image, not just the center

@@ -44,7 +44,7 @@ public class SFHCamera implements SurfaceHolder.Callback{
     @Override  
     public void surfaceDestroyed(SurfaceHolder arg0) {  
         mCamera.setPreviewCallback(null);  
-        mCamera.stopPreview();//停止预览    
+        mCamera.stopPreview();//停止预览   
         mCamera = null;  
         Log.e("Camera","surfaceDestroyed");  
     }  

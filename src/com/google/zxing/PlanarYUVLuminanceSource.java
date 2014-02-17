@@ -110,24 +110,32 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
     return dataHeight;
   }
 
-  public Bitmap renderCroppedGreyscaleBitmap() {
-    int width = getWidth();
-    int height = getHeight();
-    int[] pixels = new int[width * height];
-    byte[] yuv = yuvData;
-    int inputOffset = top * dataWidth + left;
+	/**
+	 * 从yuv数据中取出对应位置的Y数据
+	 * @return
+	 */
+	public Bitmap renderCroppedGreyscaleBitmap()
+	{
+		int width = getWidth();
+		int height = getHeight();
+		int[] pixels = new int[width * height];
+		byte[] yuv = yuvData;
+		int inputOffset = top * dataWidth + left;
 
-    for (int y = 0; y < height; y++) {
-      int outputOffset = y * width;
-      for (int x = 0; x < width; x++) {
-        int grey = yuv[inputOffset + x] & 0xff;
-        pixels[outputOffset + x] = 0xFF000000 | (grey * 0x00010101);
-      }
-      inputOffset += dataWidth;
-    }
-    
-    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-    return bitmap;
-  }
+		for (int y = 0; y < height; y++)
+		{
+			int outputOffset = y * width;
+			for (int x = 0; x < width; x++)
+			{
+				int grey = yuv[inputOffset + x] & 0xff;
+				pixels[outputOffset + x] = 0xFF000000 | (grey * 0x00010101);    //这里RGB相乘
+			}
+			inputOffset += dataWidth;
+		}
+
+		Bitmap bitmap = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		return bitmap;
+	}
 }
