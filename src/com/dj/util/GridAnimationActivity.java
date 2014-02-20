@@ -5,6 +5,8 @@ import com.dj.util.views.GridAnimationView;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -31,6 +34,8 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 	private GridAdapter mGridAdapter = new GridAdapter();
 	private final String TAG = "GridAnimationActivity";
 	private AdapterView<Adapter> mViewGroup;
+	private final int HANDLE_UPDATE_ONE_COLOUM = 0;
+	private AnimationHandler mAnimationHandler = new AnimationHandler();
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -44,6 +49,20 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 		mBtnStart.setOnClickListener(this);
 		mBtnRelay.setOnClickListener(this);
 		mGridView.setNumColumns(4);
+		mGridView.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3)
+			{
+				mGridView.animationMoveToOneColumn(arg2 - mGridView.getFirstVisiblePosition());
+				Message msg = new Message();
+				msg.what= HANDLE_UPDATE_ONE_COLOUM;
+				msg.arg1 = arg2;
+				mAnimationHandler.sendMessageDelayed(msg, 3000);
+			}
+			
+		});
 	}
 
 	public class GridAdapter extends BaseAdapter
@@ -91,10 +110,15 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 			{
 /*				LayoutParams params = mGridView.getLayoutParams();
 				params.width = 250;*/
-				mGridView.setChange(true);
+//				mGridView.setChange(true);
 //				mGridView.setNumColumns(1);
 //				mGridView.setSelection(8);
-				mGridAdapter.notifyDataSetChanged();
+//				mGridAdapter.notifyDataSetChanged();
+				mGridView.animationMoveToOneColumn(5);
+				Message msg = new Message();
+				msg.what= HANDLE_UPDATE_ONE_COLOUM;
+				msg.arg1 = 3;
+				mAnimationHandler.sendMessageDelayed(msg, 3000);
 				break;
 			}
 			case R.id.btn_start_relay:
@@ -107,5 +131,25 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 				break;
 			}
 		}
+	}
+	
+	public class AnimationHandler extends Handler
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			super.handleMessage(msg);
+			switch(msg.what)
+			{
+			case HANDLE_UPDATE_ONE_COLOUM:
+			{
+				mGridView.setNumColumns(1);
+				mGridView.setSelection(msg.arg1);
+				mGridAdapter.notifyDataSetChanged();
+				break;
+			}
+			}
+		}
+		
 	}
 }
