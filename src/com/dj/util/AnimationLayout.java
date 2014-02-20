@@ -15,51 +15,66 @@ import android.widget.ScrollView;
 public class AnimationLayout extends RelativeLayout implements OnClickListener
 {
 	private final String TAG = "AnimationLayout";
-	private int mCurrentWidth;
-	private int mCurrentHeight;
-	private int mStartOrientation;
-	private int mEndOrientation;
+	/**初始的高度**/
+	private int mHeight;
+	/**初始的宽度*/
+	private int mWidth;
 	private int mMillis;
 	private final int mAnimationSleep = 10;
 	private UpdateHandle mUpdateHandle = new UpdateHandle();
 	private Button mBtnLeft;
 	private Button mBtnRight;
-	private float mRotateDegree = 0;
-	private float mCenterX = 600;
-	private float mCenterY = 810;
-	private float mRY = 735;
-	private float mRX = 500;
+	/**半径*/
+	private float mRY = 0;
+	private float mRX = 0;
+	/**需要旋转到的角度*/
 	private float mCurrentRotate = 0;
+	/**上一次的角度*/
 	private float mLastRotate = 0;
+	/**变形模式*/
 	private int mScale;
+	/**宽度不变*/
 	private final int SCALE_NONE = 0;
+	/**变长*/
 	private final int SCALE_LONG = 1;
+	/**变短*/
 	private final int SCALE_SHORT = 2;
-	private int mHeight;
-	private RelativeLayout mRelaLayout;
+	private Context mContext;
 	public AnimationLayout(Context context, AttributeSet attrs) 
 	{
 		super(context, attrs);
 	}
 
-	public void init()
+	public void init(Context c)
 	{
-//		mRelaLayout = (RelativeLayout) (findViewById(R.id.relalayout));
 		mBtnLeft = (Button)findViewById(R.id.leftanimation);
 		mBtnRight = (Button)findViewById(R.id.rightanimation);
 		mBtnRight.setOnClickListener(this);
 		mBtnLeft.setOnClickListener(this);
+		mContext = c;
+		if(!Util.isLandScape(mContext))
+		{
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 1024);
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			params.addRule(RelativeLayout.CENTER_VERTICAL);
+			AnimationLayout.this.setLayoutParams(params);
+		}
+		else
+		{
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(1024, 100);
+			params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+			params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+			AnimationLayout.this.setLayoutParams(params);
+		}
 	}
 	
+	/**
+	 * 设置延时
+	 * @param millis
+	 */
 	public void setDuration(int millis)
 	{
 		mMillis = millis;
-	}
-	
-	public void setOrientation(int startOrientation,int endOrientation)
-	{
-		mStartOrientation = startOrientation;
-		mEndOrientation = endOrientation;
 	}
 	
 	/**
@@ -82,21 +97,28 @@ public class AnimationLayout extends RelativeLayout implements OnClickListener
 			int translateX;
 			int translateY;
 			int width;
+			int height;
 			MsgData msgData = (MsgData) msg.obj;
 			degree = (int) (msgData.getmDegree());
 			translateX = msgData.getmTranslateX();
 			translateY = msgData.getmTranslateY();
 			width = msgData.getmWidth();
+			height = msgData.getmHeight();
 			Log.d("UpdateHandle", "degree:" + degree + " width:" + width
-					+ " height:" + mHeight);
-			if(mScale == SCALE_LONG)
+					+ " height:" + height + " translateX:" + translateX + " translateY" + translateY + " mScale" + mScale);
+			if(!Util.isLandScape(mContext))
 			{
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, mHeight);
-				params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+				params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				params.addRule(RelativeLayout.CENTER_VERTICAL);
 				AnimationLayout.this.setLayoutParams(params);
-//				params.width = width;
-//				mRelaLayout.setLayoutParams(params);
-				Log.d("UpdateHandle", "width:" + AnimationLayout.this.getWidth());
+			}
+			else
+			{
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+				params.addRule(RelativeLayout.ALIGN_PARENT_TOP );
+				params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+				AnimationLayout.this.setLayoutParams(params);
 			}
 //			Log.d(TAG, "" + degree);
 			setRotation(degree);
@@ -111,28 +133,60 @@ public class AnimationLayout extends RelativeLayout implements OnClickListener
 		public void run() 
 		{
 			super.run();
-			int times = mMillis / mAnimationSleep;
+			int times = mMillis;
 			float degreeDx = 0;    //旋转的角度
 			float translateX = 0;
 			float translateY = 0;
 			int width = 0;
+			int height = 0;
 			MsgData msgData = new MsgData();
 			float degreeTemp = mCurrentRotate - mLastRotate;;
 			for(int i = 0;i < times;i++)
 			{
 				//首先做旋转
 				degreeDx = degreeTemp / times *(i + 1);
-				float tempDegree = (float) ((mLastRotate + degreeDx) * Math.PI / 180);
-				translateY = (float) (mRY * Math.cos(tempDegree) - mRY);
-				translateX = (float) (mRX * Math.sin(tempDegree));
-				if(mScale == SCALE_LONG)
+				float tempDegree;
+				if(!Util.isLandScape(mContext))
 				{
-					width = 1200 + 720 / times * (i + 1);
+					tempDegree = (float) ((mLastRotate + degreeDx + 90) * Math.PI / 180);
+					translateY = (float) (mRY * Math.cos(tempDegree));
+					translateX = (float) (mRX * Math.sin(tempDegree) - mRX);
+					if(mScale == SCALE_LONG)
+					{
+						height = Util.DISPLAY_WIDTH + (Util.DISPLAY_HEIGHT - Util.DISPLAY_WIDTH)*(i + 1) / times;
+						width = mWidth;
+					}
+					else if(mScale == SCALE_SHORT)
+					{
+						height = Util.DISPLAY_HEIGHT - (Util.DISPLAY_HEIGHT - Util.DISPLAY_WIDTH)*(i + 1) / times;
+						width = mWidth;
+					}
 				}
+				else
+				{
+					tempDegree = (float) ((mLastRotate + degreeDx + 180) * Math.PI / 180);
+					translateY = (float) (mRY * Math.cos(tempDegree) + mRY);
+					translateX = (float) (mRX * Math.sin(tempDegree));
+					if(mScale == SCALE_LONG)
+					{
+						height = mHeight;
+						width = Util.DISPLAY_HEIGHT + (Util.DISPLAY_WIDTH - Util.DISPLAY_HEIGHT)*(i + 1) / times;
+					}
+					else if(mScale == SCALE_SHORT)
+					{
+						height = mHeight;
+						width = Util.DISPLAY_WIDTH - (Util.DISPLAY_WIDTH - Util.DISPLAY_HEIGHT)*(i + 1) / times;
+					}
+				}
+				
+				Log.d(TAG, "Math.cos(tempDegree):" + Math.cos(tempDegree) + " Math.sin(tempDegree):" + Math.sin(tempDegree)
+				+" translateX:" + translateX + " translateY" + translateY + " mRX:" + mRX + " mRY:" + mRY);
 				msgData.setmDegree((int) -(degreeDx + mLastRotate));
 				msgData.setmTranslateY((int) translateY);
 				msgData.setmTranslateX((int) translateX);
 				msgData.setmWidth(width);
+				Log.d(TAG, "height :" + height);
+				msgData.setmHeight(height);
 				Message msg = mUpdateHandle.obtainMessage();
 				msg.obj = msgData;
 				mUpdateHandle.sendMessage(msg);
@@ -171,15 +225,25 @@ public class AnimationLayout extends RelativeLayout implements OnClickListener
 		private int mDegree;
 		private int mTranslateY;
 		private int mTranslateX;
-		private int mWidth;
+		private int width;
+		private int height;
 		
+		public int getmHeight()
+		{
+			Log.d(TAG, "MsgData:height:" + height);
+			return height;
+		}
+		public void setmHeight(int mHeight)
+		{
+			this.height = mHeight;
+		}
 		public int getmWidth()
 		{
-			return mWidth;
+			return width;
 		}
 		public void setmWidth(int mWidth)
 		{
-			this.mWidth = mWidth;
+			this.width = mWidth;
 		}
 		public int getmDegree()
 		{
@@ -209,23 +273,25 @@ public class AnimationLayout extends RelativeLayout implements OnClickListener
 	
 	public void rotateDegree(int degree)
 	{
+		if(!Util.isLandScape(mContext))
+		{
+			mRX = (Util.DISPLAY_WIDTH - this.getWidth()) / 2;
+			mRY = (Util.DISPLAY_HEIGHT - this.getWidth()) / 2;
+		}
+		else
+		{
+			mRX = (Util.DISPLAY_WIDTH - this.getHeight()) / 2;
+			mRY = (Util.DISPLAY_HEIGHT - this.getHeight()) / 2;
+		}
+		if(mCurrentRotate == 360 || mCurrentRotate == -360)
+		{
+			mCurrentRotate = 0;
+		}
+		if(mLastRotate == 360 || mLastRotate == -360)
+		{
+			mLastRotate = 0;
+		}
 		mCurrentRotate += degree;
-		if(mLastRotate >= 360)
-		{
-			mLastRotate = mLastRotate - 360;
-		}
-		else if(mLastRotate <= -360)
-		{
-			mLastRotate = mLastRotate + 360;
-		}
-		if(mCurrentRotate > 360)
-		{
-			mCurrentRotate = mCurrentRotate - 360;
-		}
-		else if(mCurrentRotate < -360)
-		{
-			mCurrentRotate = mCurrentRotate + 360;
-		}
 		if((mCurrentRotate - mLastRotate) == 180 || (mCurrentRotate - mLastRotate) == -180)
 		{
 			mScale = SCALE_NONE;
@@ -233,13 +299,14 @@ public class AnimationLayout extends RelativeLayout implements OnClickListener
 		if (mCurrentRotate == -90 || mCurrentRotate == 90
 				|| mCurrentRotate == 270 || mCurrentRotate == -270)
 		{
-			mScale = SCALE_LONG;
+				mScale = SCALE_SHORT;
 		}
 		else
 		{
-			mScale = SCALE_SHORT;
+				mScale = SCALE_LONG;
 		}
-		mCurrentWidth = AnimationLayout.this.getWidth();
+		Log.d(TAG, "mCurrent:" + mCurrentRotate + " mLast" + mLastRotate);
+		mWidth = AnimationLayout.this.getWidth();
 		mHeight = AnimationLayout.this.getHeight();
 		startAnimation();
 	}

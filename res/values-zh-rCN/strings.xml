@@ -22,4 +22,6 @@
     <string name="qrcode">二维码识别</string>
     <string name="action_rotate_layout">com.dj.action.ROTATE_LAYOUT</string>
     <string name="rotate_layout">布局转动</string>
+    <string name="action_animation_grid">com.dj.action.ANIMATION_GRID</string>
+    <string name="animation_grid">网格动画</string>
 </resources>

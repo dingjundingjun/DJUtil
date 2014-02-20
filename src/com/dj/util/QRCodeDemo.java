@@ -79,7 +79,6 @@ public class QRCodeDemo extends Activity
         @Override  
         public void onPreviewFrame(byte[] data, Camera camera) 
         {  
-        	
         	Log.d("QRCodeDemo", camera.getParameters().getPreviewSize().width + " " + camera.getParameters().getPreviewSize().height);
         	Log.d("QRCodeDemo", "" +data.length);
         	//取得指定范围的帧的数据  
@@ -89,6 +88,7 @@ public class QRCodeDemo extends Activity
         	int tWidth = camera.getParameters().getPreviewSize().width;
         	int tHeight = camera.getParameters().getPreviewSize().height;
         	byte yuvData[] = new byte[tWidth*tHeight*3/2];
+//        	yuvData = data;
             YUVRotate90(data, yuvData, width, height);    //旋转90度
 //        	PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(  
 //        			yuvData, width, height, dstLeft, dstTop, 300, 300);  
