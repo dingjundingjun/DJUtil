@@ -92,8 +92,8 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 /*				LayoutParams params = mGridView.getLayoutParams();
 				params.width = 250;*/
 				mGridView.setChange(true);
-				mGridView.setNumColumns(1);
-				mGridView.setSelection(8);
+//				mGridView.setNumColumns(1);
+//				mGridView.setSelection(8);
 				mGridAdapter.notifyDataSetChanged();
 				break;
 			}
