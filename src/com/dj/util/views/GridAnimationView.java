@@ -2,6 +2,8 @@ package com.dj.util.views;
 
 import java.util.ArrayList;
 
+import com.dj.util.GridAnimationActivity;
+
 import jding.debug.JDingDebug;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +30,17 @@ import android.widget.ListAdapter;
 
 public class GridAnimationView extends GridView
 {
+	private final int GRID_DEVIATION_Y = 5;
+	private final int GRID_DEVIATION_X = 5;
+	private final int CHILD_VIEW_WIDTH = 250;
+	private final int CHILD_VIEW_LAND_HEIGHT = 180;
+	private final int CHILD_MIDDLE_POSITION = 2;
+	private final int CHILD_LAND_ALL_POSITION_NUMBER = 4;
 	private final String TAG = "GridAnimationView";
 	private boolean bShortAnimation = false;
 	private ArrayList<View> mArrayList = new ArrayList<View>();
 	private int mSelection = 5;
-	private int[][]mPositionArray = new int[][]{{0,10},{0,370},{0,730},{0,1090}};
+	private int[][]mPositionArray = new int[][]{{0,0},{0,180},{0,360},{0,540}};
 	private int[] mTopPosition = new int[]{0,-500};
 	private int[] mBottomPosition = new int[]{0,1700};
 	public GridAnimationView(Context context, AttributeSet attrs)
@@ -54,64 +62,6 @@ public class GridAnimationView extends GridView
 	protected void layoutChildren()
 	{
 		super.layoutChildren();
-		// 在 这要弄一个动画 动画完成重新排序
-		// if(!bUseAnimation)
-		// int changeBeforFirstPosition = getFirstVisiblePosition();
-		// int firstLayout = mSelection - 2;
-		// mArrayList.clear();
-		// for(int i = 0;i < 16;i++) //把当前显示的view保存起来
-		// {
-		// mArrayList.add(getChildAt(i));
-		// }
-		// // JDingDebug.printfD(TAG," getFirstVisiblePosition():" +
-		// getFirstVisiblePosition()); //变换以前第一个VIEW位置
-		// if(!bShortAnimation)
-		// {
-		// super.layoutChildren();
-		// }
-		// if(bShortAnimation)
-		// {
-		// int firstViewPosition = getFirstVisiblePosition(); //第一个view位置
-		// JDingDebug.printfD(TAG, "layoutChildren:");
-		// int childCount = getChildCount();
-		// RotateAnimation rotateAnimation = new RotateAnimation(0, 90);
-		// TranslateAnimation translateAnimation = new TranslateAnimation(0,
-		// -50, 0, 0);
-		// AnimationSet animationSet = new AnimationSet(false);
-		// animationSet.addAnimation(rotateAnimation);
-		// animationSet.addAnimation(translateAnimation);
-		// animationSet.setDuration(3000);
-		// for(int i = 0;i < 16;i++)
-		// {
-		// View tempView = mArrayList.get(i);
-		// if(i < firstLayout)
-		// {
-		// }
-		//
-		//
-		//
-		// if(i % 2 == 0)
-		// tempView.setRotation(60);
-		// else
-		// tempView.setRotation(-60);
-		// }
-		//
-		// for(int i = 0; i < childCount; i++)
-		// {
-		// View child = getChildAt(i);
-		// JDingDebug.printfD(TAG,
-		// "index:" + i + " left:" + child.getLeft() + " top:"
-		// + child.getTop() + " width:" + child.getWidth()
-		// + " height:" + child.getHeight() + " getFirstVisiblePosition():" +
-		// getFirstVisiblePosition());
-		// /*android.view.ViewGroup.LayoutParams params =
-		// child.getLayoutParams();*/
-		// // child.setAnimation(animationSet);
-		// if(i % 2 == 0)
-		// child.setRotation(60);
-		// else
-		// child.setRotation(-60);
-		// }
 	}
 
 	public void setChange(boolean b)
@@ -125,108 +75,37 @@ public class GridAnimationView extends GridView
 	public void animationMoveToOneColumn(int selection)
 	{
 		// 在 这要弄一个动画 动画完成重新排序
-		int changeBeforFirstPosition = getFirstVisiblePosition();
 		int childCount = this.getChildCount();
 		mArrayList.clear();
-		int j = 0;
-		JDingDebug.printfD(TAG, "animationMoveToOneColumn:" + selection + " " + childCount);
+		JDingDebug.printfD(TAG, "animationMoveToOneColumn:" + selection + " " + childCount  + " getLastVisiblePosition:" + getLastVisiblePosition());
+		int firstPositonY = (CHILD_MIDDLE_POSITION - selection - 1)* CHILD_VIEW_LAND_HEIGHT;
+		int firstPositionX = GRID_DEVIATION_X;
+		if(selection >= getLastVisiblePosition() - 1)
+		{
+			firstPositonY = (CHILD_LAND_ALL_POSITION_NUMBER - getLastVisiblePosition() - 1)* CHILD_VIEW_LAND_HEIGHT;
+		}
+		if(selection == getFirstVisiblePosition())
+		{
+			firstPositonY = 0;
+		}
+		firstPositonY += GRID_DEVIATION_Y;
+		
 		for (int i = 0; i < childCount; i++)
 		{
 			View tempView = getChildAt(i);
 			TranslateAnimation translateAnimation;
-			int x;
-			int y;
 			float dx;
 			float dy;
-			
-			if (i < selection/* || i >= selection + 2*/)
-			{
-				dx = mTopPosition[0] - tempView.getX();
-				dy = mTopPosition[1] - tempView.getY();
-				AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
-				translateAnimation = new TranslateAnimation(0,dx,0,dy);
-				AnimationSet animationSet = new AnimationSet(false);
-				animationSet.addAnimation(alphaAnimation);
-				animationSet.addAnimation(translateAnimation);
-				animationSet.setDuration(3000);
-				tempView.setAnimation(animationSet);
-			}
-			else if(i >= selection + 2)
-			{
-				dx = mBottomPosition[0] - tempView.getX();
-				dy = mBottomPosition[1] - tempView.getY();
-				AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
-				translateAnimation = new TranslateAnimation(0,dx,0,dy);
-				AnimationSet animationSet = new AnimationSet(false);
-				animationSet.addAnimation(alphaAnimation);
-				animationSet.addAnimation(translateAnimation);
-				animationSet.setDuration(3000);
-				tempView.setAnimation(animationSet);
-			}
-			else
-			{
-				x = mPositionArray[j][0];
-			    y = mPositionArray[j][1];
-				dx = (x - tempView.getX());
-				dy = (y - tempView.getY());
-				translateAnimation = new TranslateAnimation(0,dx,0,dy);
-				translateAnimation.setDuration(3000);
-				tempView.setAnimation(translateAnimation);
-				j++;
-			}
+			dx = firstPositionX - tempView.getX();
+			dy = firstPositonY + i*CHILD_VIEW_LAND_HEIGHT - tempView.getY();
+			JDingDebug.printfD(TAG, "dy:" + dy);
+			AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+			translateAnimation = new TranslateAnimation(0,dx,0,dy);
+			AnimationSet animationSet = new AnimationSet(false);
+//			animationSet.addAnimation(alphaAnimation);
+			animationSet.addAnimation(translateAnimation);
+			animationSet.setDuration(GridAnimationActivity.ANIMATION_SLEEP);
+			tempView.setAnimation(animationSet);
 		}
-//		for (int i = 0; i < 16; i++) // 把当前显示的view保存起来
-//		{
-//			mArrayList.add(getChildAt(i));
-//		}
-		// // JDingDebug.printfD(TAG," getFirstVisiblePosition():" +
-		// getFirstVisiblePosition()); //变换以前第一个VIEW位置
-		// if(!bShortAnimation)
-		// {
-		// super.layoutChildren();
-		// }
-		// if(bShortAnimation)
-		// {
-		// int firstViewPosition = getFirstVisiblePosition(); //第一个view位置
-		// JDingDebug.printfD(TAG, "layoutChildren:");
-		// int childCount = getChildCount();
-		// RotateAnimation rotateAnimation = new RotateAnimation(0, 90);
-		// TranslateAnimation translateAnimation = new TranslateAnimation(0,
-		// -50, 0, 0);
-		// AnimationSet animationSet = new AnimationSet(false);
-		// animationSet.addAnimation(rotateAnimation);
-		// animationSet.addAnimation(translateAnimation);
-		// animationSet.setDuration(3000);
-		// for(int i = 0;i < 16;i++)
-		// {
-		// View tempView = mArrayList.get(i);
-		// if(i < firstLayout)
-		// {
-		// }
-		//
-		//
-		//
-		// if(i % 2 == 0)
-		// tempView.setRotation(60);
-		// else
-		// tempView.setRotation(-60);
-		// }
-		//
-		// for(int i = 0; i < childCount; i++)
-		// {
-		// View child = getChildAt(i);
-		// JDingDebug.printfD(TAG,
-		// "index:" + i + " left:" + child.getLeft() + " top:"
-		// + child.getTop() + " width:" + child.getWidth()
-		// + " height:" + child.getHeight() + " getFirstVisiblePosition():" +
-		// getFirstVisiblePosition());
-		// /*android.view.ViewGroup.LayoutParams params =
-		// child.getLayoutParams();*/
-		// // child.setAnimation(animationSet);
-		// if(i % 2 == 0)
-		// child.setRotation(60);
-		// else
-		// child.setRotation(-60);
-		// }
 	}
 }

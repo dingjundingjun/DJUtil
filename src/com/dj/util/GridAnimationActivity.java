@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 public class GridAnimationActivity extends Activity implements OnClickListener
 {
+	public static final int ANIMATION_SLEEP = 1000;
 	private Button mBtnStart;
 	private Button mBtnRelay;
 	private GridAnimationView mGridView;
@@ -58,8 +59,8 @@ public class GridAnimationActivity extends Activity implements OnClickListener
 				mGridView.animationMoveToOneColumn(arg2 - mGridView.getFirstVisiblePosition());
 				Message msg = new Message();
 				msg.what= HANDLE_UPDATE_ONE_COLOUM;
-				msg.arg1 = arg2;
-				mAnimationHandler.sendMessageDelayed(msg, 3000);
+				msg.arg1 = arg2 - mGridView.getFirstVisiblePosition() - 1;
+				mAnimationHandler.sendMessageDelayed(msg, ANIMATION_SLEEP);
 			}
 			
 		});
