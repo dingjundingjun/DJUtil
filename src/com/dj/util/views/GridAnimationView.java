@@ -30,6 +30,7 @@ import android.widget.ListAdapter;
 
 public class GridAnimationView extends GridView
 {
+
 	private final int GRID_DEVIATION_Y = 5;
 	private final int GRID_DEVIATION_X = 5;
 	private final int CHILD_VIEW_WIDTH = 250;
@@ -39,14 +40,11 @@ public class GridAnimationView extends GridView
 	private final String TAG = "GridAnimationView";
 	private boolean bShortAnimation = false;
 	private ArrayList<View> mArrayList = new ArrayList<View>();
-	private int mSelection = 5;
-	private int[][]mPositionArray = new int[][]{{0,0},{0,180},{0,360},{0,540}};
-	private int[] mTopPosition = new int[]{0,-500};
-	private int[] mBottomPosition = new int[]{0,1700};
+	private int mSelection = 0;
+	private float mSelectionY = 0;
 	public GridAnimationView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -61,7 +59,7 @@ public class GridAnimationView extends GridView
 	@Override
 	protected void layoutChildren()
 	{
-		super.layoutChildren();
+			super.layoutChildren();
 	}
 
 	public void setChange(boolean b)
@@ -69,6 +67,51 @@ public class GridAnimationView extends GridView
 		bShortAnimation = b;
 	}
 
+	public void getSelectionPosition(int selection)
+	{
+		mSelection = selection;
+		View tempView = this.getChildAt(selection);
+		JDingDebug.printfD(TAG, "getSelectionPosition:"  + " " + selection + " " + getFirstVisiblePosition() + " " + tempView.getY());
+		mSelectionY =  tempView.getY();
+	}
+	
+	public void animationMoveToMutColumn(int selection)
+	{
+		int childCount = this.getChildCount();
+		for(int i = 0;i < childCount;i++)
+		{
+			mArrayList.add(this.getChildAt(i));
+			if(i >= 16)
+			{
+				break;
+			}
+		}
+		//先记录下动画完成的位置
+		int viewCount = mArrayList.size();
+		float firstPositonY = mSelectionY - (getFirstVisiblePosition() + selection - 1)* CHILD_VIEW_LAND_HEIGHT;
+		for(int i = 0;i<viewCount;i++)
+		{
+			View tempView = mArrayList.get(i);
+			float endX = tempView.getX();
+			float endY = tempView.getY();
+			float startX = GRID_DEVIATION_X;
+			float startY = firstPositonY + i*CHILD_VIEW_LAND_HEIGHT;
+			
+			float dx = startX - endX;
+			float dy = startY - endY;
+			tempView.setTranslationX(dx);
+			tempView.setTranslationY(dy);
+			JDingDebug.printfD(TAG, "i:"  + i + " dx:" + dx + " dy:" + dy);
+			AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+			TranslateAnimation translateAnimation;
+			translateAnimation = new TranslateAnimation(0,-dx,0,-dy);
+			AnimationSet animationSet = new AnimationSet(false);
+			animationSet.addAnimation(translateAnimation);
+			animationSet.setDuration(GridAnimationActivity.ANIMATION_SLEEP/*GridAnimationActivity.ANIMATION_SLEEP*/);
+			tempView.setAnimation(animationSet);
+		}
+	}
+	
 	/**
 	 * 移动到一边的动画
 	 */
@@ -77,7 +120,6 @@ public class GridAnimationView extends GridView
 		// 在 这要弄一个动画 动画完成重新排序
 		int childCount = this.getChildCount();
 		mArrayList.clear();
-		JDingDebug.printfD(TAG, "animationMoveToOneColumn:" + selection + " " + childCount  + " getLastVisiblePosition:" + getLastVisiblePosition());
 		int firstPositonY = (CHILD_MIDDLE_POSITION - selection - 1)* CHILD_VIEW_LAND_HEIGHT;
 		int firstPositionX = GRID_DEVIATION_X;
 		if(selection >= getLastVisiblePosition() - 1)
@@ -107,5 +149,10 @@ public class GridAnimationView extends GridView
 			animationSet.setDuration(GridAnimationActivity.ANIMATION_SLEEP);
 			tempView.setAnimation(animationSet);
 		}
+	}
+	
+	public void setGridSelection(int s)
+	{
+		mSelection = s;
 	}
 }
