@@ -17,7 +17,8 @@ public class Util
 	{ R.string.describe_dragviews, R.string.action_dragviews },
 	{ R.string.qrcode, R.string.action_qrcode },
 	{ R.string.rotate_layout, R.string.action_rotate_layout },
-	{ R.string.animation_grid, R.string.action_animation_grid }};
+	{ R.string.animation_grid, R.string.action_animation_grid },
+	{ R.string.handwrite_recognition, R.string.action_handwrite_recognition }};
 	/**
 	 * 判断是横屏还是竖屏
 	 * @param context

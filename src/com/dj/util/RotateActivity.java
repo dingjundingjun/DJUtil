@@ -1,5 +1,7 @@
 package com.dj.util;
 
+import com.dj.util.views.AnimationLayout;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;

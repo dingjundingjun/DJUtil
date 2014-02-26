@@ -24,4 +24,8 @@
     <string name="rotate_layout">布局转动</string>
     <string name="action_animation_grid">com.dj.action.ANIMATION_GRID</string>
     <string name="animation_grid">网格动画</string>
+    <string name="action_handwrite_recognition">com.dj.action.HANDWRITE_RECOGNITION</string>
+    <string name="handwrite_recognition">手写识别</string>
+    <!-- 控件相关 -->
+    <string name="handwrite_recognition_btn_clear">清除</string>
 </resources>
