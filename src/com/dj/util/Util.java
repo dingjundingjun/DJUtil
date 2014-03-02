@@ -1,5 +1,9 @@
 package com.dj.util;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 import jding.debug.JDingDebug;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -8,6 +12,7 @@ import android.view.WindowManager;
 
 public class Util
 {
+	private final static String TAG = "Util";
 	/**屏幕宽度*/
 	public static int DISPLAY_WIDTH;
 	/**屏幕高度*/
@@ -44,5 +49,52 @@ public class Util
 		DISPLAY_WIDTH = display.getWidth();
 		DISPLAY_HEIGHT = display.getHeight();
 		JDingDebug.printfD("Util", "w=" + DISPLAY_WIDTH + " h=" + DISPLAY_HEIGHT);
+	}
+	
+	/**
+	 * 解析编码，解析出中文，存成列表
+	 * @param b
+	 * @param result
+	 */
+	public static void getUCSString(byte b[],List<String> result)
+	{
+		result.clear();
+		byte[] tempB = new byte[2];
+		StringBuffer resultStr = new StringBuffer();
+		for(int i= 0;i<1024;i++)
+		{
+//			JDingDebug.printfD(TAG, "i:" + b[i] + " " + b[i+1]);
+			String tempStr = "";
+			if(i%2 == 0)
+			{
+				
+				if(!(b[i] == 0 && b[i+1] == 0))
+				{
+					try
+					{
+						tempB[0] = b[i + 1];
+						tempB[1] = b[i];
+						tempStr = new String(tempB,"ucs-2");
+						JDingDebug.printfD(TAG, "tempStr:" + tempStr);
+						resultStr.append(tempStr);
+					} catch (UnsupportedEncodingException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					
+					String str = new String(resultStr);
+					JDingDebug.printfD(TAG, "str:" + str + " resultStr:" + resultStr);
+					result.add(str);
+					resultStr = new StringBuffer("");
+				}
+			}
+			if(b[i] == 0 && b[i+1] == 0 && b[i+2] == 0 && b[i + 3] == 0)
+			{
+				break;
+			}
+		}
 	}
 }

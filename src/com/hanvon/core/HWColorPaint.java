@@ -32,7 +32,7 @@ public class HWColorPaint {
     public native static boolean initializeExByte(int nWidth, int nHeight, byte[] pDrawMemory );
     
     public native static boolean initializeBitmap(Bitmap pDrawMemory);
-
+    public native static void setSimulatePressure(boolean b);
     /**
      * 汉王画笔属性设置函数；
      * 

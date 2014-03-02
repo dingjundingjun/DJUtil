@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.dj.util.Util;
 import com.hanvon.core.HWColorPaint;
 import com.hanvon.core.StrokeCollection;
 
@@ -20,6 +23,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -28,6 +32,7 @@ import android.widget.Toast;
 
 public class StrokeView extends View
 {
+	private final String TAG = "StrokeView";
 	//画笔迹的Bitmap
     private Bitmap  mBitmap;
     private int[] mPixels;
@@ -57,9 +62,18 @@ public class StrokeView extends View
 	Canvas mCanvas;
 	Rect refreshRect;
     
-    public StrokeView(Context c, int width, int height) {
+	/**手写识别*/
+    private short[] mRecognition = new short[2048];
+    private int mRecognition_index = 0;
+    private Context mContext;
+    private RecognitionHandler mRecognitionHandler = new RecognitionHandler();
+    private final int HANDLER_TO_RECONGNITION = 0;
+    private final int RECONGNITION_SLEEP = 1000;
+    private RecognitionListerner mRecognitionListerner;
+    private List<String> mResult = new ArrayList<String>();
+	public StrokeView(Context c, int width, int height) {
         super(c);
-              
+        mContext = c;
 		//int width = 1024, height = 600;
         mWidth = width;
         mHeight = height;
@@ -152,6 +166,15 @@ public class StrokeView extends View
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				if (!mIsMove) {
+					mRecognitionHandler.removeMessages(HANDLER_TO_RECONGNITION);
+					if(mRecognition_index >= 2047)
+					{
+						mRecognitionHandler.sendEmptyMessageDelayed(
+								HANDLER_TO_RECONGNITION, RECONGNITION_SLEEP);
+						break;
+					}
+					mRecognition[mRecognition_index++] = (short) x;
+					mRecognition[mRecognition_index++] = (short) y;
 					//调用方式二：mStrokes.addStroke(mPenStyle, Color.argb(255, 0, 0, 0), mPenWidth, true);
 					mStrokes.addStroke(mPenStyle, mColorType, mPenWidth, false);
 					mIsMove = true;					
@@ -159,6 +182,14 @@ public class StrokeView extends View
 				break;
 			case MotionEvent.ACTION_MOVE:	
 				refreshRect = mStrokes.add(new Point(x, y), pressure);
+				if(mRecognition_index >= 2047)
+				{
+					mRecognitionHandler.sendEmptyMessageDelayed(
+							HANDLER_TO_RECONGNITION, RECONGNITION_SLEEP);
+					break;
+				}
+				mRecognition[mRecognition_index++] = (short) x;
+				mRecognition[mRecognition_index++] = (short) y;
 				if (refreshRect.width() != 0 && refreshRect.height() != 0) {
 					
 					mBitmap.setPixels(mPixels, refreshRect.top * mWidth
@@ -171,6 +202,17 @@ public class StrokeView extends View
 				break;
 			case MotionEvent.ACTION_UP:
 				// 笔迹结束的时候，传（-100，-100）通知结束
+				if(mRecognition_index >= 2047)
+				{
+					mRecognitionHandler.sendEmptyMessageDelayed(
+							HANDLER_TO_RECONGNITION, RECONGNITION_SLEEP);
+					break;
+				}
+				mRecognition[mRecognition_index++] = -1;
+				mRecognition[mRecognition_index++] = 0;
+/*				mRecognition[mRecognition_index++] = -1;
+				mRecognition[mRecognition_index++] = -1;*/
+				
 				refreshRect = mStrokes.add(new Point(-100, -100), -100f);
 				if (refreshRect.width() != 0 && refreshRect.height() != 0) {
 
@@ -182,6 +224,8 @@ public class StrokeView extends View
 					invalidate(refreshRect);
 				}
 				mIsMove = false;
+					mRecognitionHandler.sendEmptyMessageDelayed(
+							HANDLER_TO_RECONGNITION, RECONGNITION_SLEEP);
 				break;
 			default:
 				break;
@@ -406,5 +450,59 @@ public class StrokeView extends View
 	{
 		System.loadLibrary("handwrite");
 	}
-	public native byte[] recognition();
+	
+	public byte[] nativeRecognition()
+	{
+//		for(int i = 0; i < mRecognition_index + 1;i ++)
+//		{
+//			Log.d("nativeRecognition", "" + mRecognition[i]);
+//			if(mRecognition[i] == -1 && mRecognition[i + 1] == -1)
+//		}
+		return recognition(mRecognition);
+	}
+	public native byte[] recognition(short p[]);
+	
+	/**1秒无超做则判断为需要识别*/
+	public class RecognitionHandler extends Handler
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			super.handleMessage(msg);
+			switch(msg.what)
+			{
+				case HANDLER_TO_RECONGNITION:
+				{
+					Log.d(TAG, "the handwrite will to recognition ~~");
+					mRecognition[mRecognition_index++] = -1;
+					mRecognition[mRecognition_index++] = -1;
+					mRecognition_index = 0;
+					clear();
+					toRecognition();
+					mRecognitionListerner.onRecognitionResult(mResult);
+					break;
+				}
+			}
+		}
+	}
+	
+	public void setRecognitionListerner(RecognitionListerner listener)
+	{
+		mRecognitionListerner = listener;
+	}
+	
+	public interface RecognitionListerner
+	{
+		public void onRecognitionResult(List<String> result);
+	}
+	
+	public void toRecognition()
+	{
+		Util.getUCSString(recognition(mRecognition),mResult);
+		/*String str = "";
+		for(int i = 0;i < mResult.size();i++)
+		{
+			str += mResult.get(i) + " ";
+		}*/
+	}
 }

@@ -1,10 +1,17 @@
 package com.dj.util.views;
 
+import java.util.List;
+
 import com.hanvon.core.StrokeView;
+import com.hanvon.core.StrokeView.RecognitionHandler;
+import com.hanvon.core.StrokeView.RecognitionListerner;
 
 import jding.debug.JDingDebug;
 import android.content.Context;
+import android.os.Bundle;
+import android.speech.RecognitionListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 public class HandWriteRecognitionView extends RelativeLayout
@@ -14,6 +21,7 @@ public class HandWriteRecognitionView extends RelativeLayout
 	private int mHeight = 0;
 	private StrokeView mStrokeView = null;
 	private Context mContext;
+	private RecognitionListerner mRecognitionListerner;
 	public HandWriteRecognitionView(Context context, AttributeSet attrs,
 			int defStyle)
 	{
@@ -33,12 +41,16 @@ public class HandWriteRecognitionView extends RelativeLayout
 		super.onLayout(changed, l, t, r, b);
 		if((mWidth != r-l) || (mHeight != b-t))
 		{
+			Log.d(TAG, "onLayout: 1111111111111111111111111");
 			mWidth = r - l;
 			mHeight = b - t;
-			mStrokeView = null;
-			this.removeAllViews();
-			mStrokeView = new StrokeView(mContext, mWidth, mHeight);
-			this.addView(mStrokeView);
+			if(mStrokeView == null)
+			{
+				this.removeAllViews();
+				mStrokeView = new StrokeView(mContext, mWidth, mHeight);
+				mStrokeView.setRecognitionListerner(mRecognitionListerner);
+				this.addView(mStrokeView);
+			}
 		}
 	}
 	
@@ -67,9 +79,16 @@ public class HandWriteRecognitionView extends RelativeLayout
 	{
 		if(mStrokeView != null)
 		{
-			byte[] b = mStrokeView.recognition();
+			byte[] b = mStrokeView.nativeRecognition();
 			return b;
 		}
 		return null;
+	}
+
+
+	public void setRecognitionListener(
+			RecognitionListerner listener)
+	{
+		mRecognitionListerner = listener;
 	}
 }

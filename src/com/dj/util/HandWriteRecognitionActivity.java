@@ -1,8 +1,7 @@
 package com.dj.util;
 
-import java.io.UnsupportedEncodingException;
-
-import jding.debug.JDingDebug;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,14 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dj.util.views.HandWriteRecognitionView;
+import com.hanvon.core.StrokeView.RecognitionListerner;
 
-public class HandWriteRecognitionActivity extends Activity implements OnClickListener
+public class HandWriteRecognitionActivity extends Activity implements OnClickListener 
 {
 	private final String TAG = "HandWriteRecognitionActivity";
 	private HandWriteRecognitionView mHandWriteRecognitionView;
 	private Button mBtnClear;
 	private Button mBtnTest;
 	private EditText mEditText;
+	private List<String> mResult = new ArrayList<String>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -38,6 +39,20 @@ public class HandWriteRecognitionActivity extends Activity implements OnClickLis
 		
 		mHandWriteRecognitionView = (HandWriteRecognitionView)findViewById(R.id.handwriterecognition);
 		mHandWriteRecognitionView.init(this);
+		mHandWriteRecognitionView.setRecognitionListener(new RecognitionListerner()
+		{
+			@Override
+			public void onRecognitionResult(List<String> result)
+			{
+				mEditText.setText("");
+				String str = "";
+				for(int i = 0;i < result.size();i++)
+				{
+					str += result.get(i) + " ";
+				}
+				mEditText.setText(str);
+			}
+		});
 	}
 
 	@Override
@@ -52,26 +67,13 @@ public class HandWriteRecognitionActivity extends Activity implements OnClickLis
 		}
 		case R.id.btn_test:
 		{
-			byte[] b = mHandWriteRecognitionView.test();
-			for(int i= 0;i<1024;i++)
+			Util.getUCSString(mHandWriteRecognitionView.test(),mResult);
+			String str = "";
+			for(int i = 0;i < mResult.size();i++)
 			{
-				JDingDebug.printfD(TAG, "i:" + b[i]);
-				if(b[i] == 0 && b[i+1] == 0)
-				{
-					break;
-				}
+				str += mResult.get(i) + " ";
 			}
-			
-			String result = "";
-			try
-			{
-				result = new String(b, "ucs-2");
-			} catch (UnsupportedEncodingException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			mEditText.setText(result);
+			mEditText.setText(str);
 		}
 		}
 	}

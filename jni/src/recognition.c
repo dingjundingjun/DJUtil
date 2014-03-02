@@ -41,9 +41,10 @@ char* RecogCS(short *pnPoint)
 		iRst = HWRC_GetResult((unsigned long*) adw, 10, acRst);
 		LOGV("HWRC_GetResult() %d", iRst);
 	}
+	getCharLen(acRst,iRst);
 	for (i = 0; i < iRst; ++i) {
 //			printf("%x,",*(WORD*)(acRst+(2*i)));
-		LOGV("%x," + *(WORD*)(acRst+(2*i)));
+		LOGV("%x,",*(WORD*)(acRst+(2*i)));
 	}
 	return acRst;
 }
@@ -94,19 +95,67 @@ char* TestCSAPI() {
 	//iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC|ALC_ALPHA);
 
 	//打开字、数、英、标点的范围，在输入短句的时候会输出汉字、数字、英文字母、标点等，在书写一个字符的时候，可能会输出标点、数字、字母等
-	//iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC|ALC_ALPHA|ALC_PUN_SYM);
+//	iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC|ALC_ALPHA|ALC_PUN_SYM);
 	return RecogCS(g_anPoint2_1);
 }
 
-int getCharLen(char* p)
+int getShortLen(short* p)
 {
 	int i = 0;
 	for(i=0;i<1024;i++)
 	{
-		LOGV("getCharLen:%d %d",i,p[i]);
-		if(p[i] == 0 && p[i++] == 0)
+		LOGV("getShortLen:%d %d %d",i,p[i],p[i+1]);
+		if(p[i] == 0 && p[i + 1] == 0)
 		{
 			return i+1;
 		}
 	}
 }
+
+char* CSAPI(short point[]) {
+	getShortLen(point);
+	int iRst;
+	char acRst[1024];
+	int n;
+	int i = 0;
+	BYTE* pbDic = NULL;
+
+	memset(adw, 0, 128 * sizeof(DWORD));
+	LOGV("TestCSAPI() ");
+	iRst = HWRC_SetWorkSpace((unsigned long *) adw, (char *) g_abCsRam,
+			SENTENCE_REC_RAM_SIZE);
+	LOGV("HWRC_SetWorkSpace() %d", iRst);
+	pbDic = ReadAFile("/mnt/sdcard/com_hwrc_18030.bin", &n);
+	iRst = HWRC_SetRecogDic((unsigned long*) adw, (const unsigned char*) pbDic);
+
+	iRst = HWRC_SetRecogMode((unsigned long*) adw, HWRC_CHS_SENTENCE);
+	LOGV("HWRC_SetRecogMode() %d", iRst);
+	iRst = HWRC_SetRecogRange((unsigned long*) adw, ALC_GB18030);
+	LOGV("HWRC_SetRecogRange() %d", iRst);
+	//只打开识别汉字的范围，在输入短句的时候不会输出标点等，在书写一个字符的时候，可能会输出标点、数字、字母等
+
+	//打开字、数的范围，在输入短句的时候会输出汉字、数字等，在书写一个字符的时候，可能会输出标点、数字、字母等
+	//iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC);
+
+	//打开字、数、英的范围，在输入短句的时候会输出汉字、数字、英文字母等，在书写一个字符的时候，可能会输出标点、数字、字母等
+	//iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC|ALC_ALPHA);
+
+	//打开字、数、英、标点的范围，在输入短句的时候会输出汉字、数字、英文字母、标点等，在书写一个字符的时候，可能会输出标点、数字、字母等
+//	iRst = HWRC_SetRecogRange( (unsigned long*)adw, ALC_GB18030|ALC_NUMERIC|ALC_ALPHA|ALC_PUN_SYM);
+	return RecogCS(point);
+}
+
+int getCharLen(char* p,int r)
+{
+	int i = 0;
+	int len = r*2;
+	for(i=0;i<len + 1;i++)
+	{
+		LOGV("getCharLen:%d %d %d",i,p[i],p[i + 1]);
+//		if(p[i] == 0 && p[i + 1] == 0)
+//		{
+//			return i+1;
+//		}
+	}
+}
+

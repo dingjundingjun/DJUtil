@@ -6,4 +6,5 @@
 
 void RecogCS( short *pnPoint );
 char* TestCSAPI();
+char* CSAPI(short *pnPoint);
 int getCharLen(char *p);

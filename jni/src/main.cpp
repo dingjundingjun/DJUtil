@@ -8,18 +8,33 @@ extern "C"
 };
 static const char *classPathName="com/hanvon/core/StrokeView";
 
-jbyteArray recognition(JNIEnv *env, jobject thiz)
+jbyteArray recognition(JNIEnv *env, jobject thiz,jshortArray point)
 {
-	char* result = TestCSAPI();
-	int len = getCharLen(result);
-	jbyteArray retarray = env->NewByteArray(len);
-	env->SetByteArrayRegion(retarray, 0, len,(jbyte *)result);
+	short *p = env->GetShortArrayElements(point,0);
+	char* result = CSAPI(p);
+
+	int i = 0;
+	for(i=0;i<1024;i++)
+	{
+		if(result[i] == 0 && result[i+1] == 0 && result[i+2] == 0 && result[i+3] == 0)
+			break;
+	}
+//		int len = getCharLen(result);
+		int len = i +  4;
+		jbyteArray retarray = env->NewByteArray(len);
+		env->SetByteArrayRegion(retarray, 0, len,(jbyte *)result);
+
+
+//	int len = i + 2;
+//	jcharArray retarray = env->NewCharArray(len);
+//	env->SetCharArrayRegion(retarray, 0, len,(jchar *)result);
 //	env->CallVoidMethod(thiz, method_onScanResult, retarray);
     return retarray;
 }
 
 static JNINativeMethod methods[] = {
-    {"recognition", "()[B", (jbyteArray*)recognition},
+		{"recognition", "([S)[B", (jbyteArray*)recognition}
+//    {"recognition", "([S)[C", (jcharArray*)recognition},
 };
 
 /*
@@ -78,5 +93,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 fail:
 	return result;
 }
+
+
 
 
