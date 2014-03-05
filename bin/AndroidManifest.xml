@@ -91,6 +91,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.dj.util.CameraUseActivity"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="com.dj.action.CAMERA_USE_DEMO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
