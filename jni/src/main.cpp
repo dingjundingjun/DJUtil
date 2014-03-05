@@ -32,8 +32,27 @@ jbyteArray recognition(JNIEnv *env, jobject thiz,jshortArray point)
     return retarray;
 }
 
+void nativeSetRecogModeChi(JNIEnv *env, jobject thiz)
+{
+	setRecogModeChi();
+}
+
+void nativeSetRecogModeEng(JNIEnv *env, jobject thiz)
+{
+	setRecogModeEng();
+}
+
+void nativeSetRecogModeAll(JNIEnv *env, jobject thiz)
+{
+	setRecogModeAll();
+}
+
 static JNINativeMethod methods[] = {
-		{"recognition", "([S)[B", (jbyteArray*)recognition}
+		{"recognition", "([S)[B", (jbyteArray*)recognition},
+		{"nativeSetRecogModeChi","()V",(void*)setRecogModeChi},
+		{"nativeSetRecogModeEng","()V",(void*)setRecogModeEng},
+		{"nativeSetRecogModeAll","()V",(void*)setRecogModeAll}
+
 //    {"recognition", "([S)[C", (jcharArray*)recognition},
 };
 
@@ -78,7 +97,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	JNIEnv *env = NULL;
 
 	LOGI("INFO: JNI_OnLoad");
-
+	init();
 	if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
 		LOGE("ERROR: GetEnv failed");
 		goto fail;

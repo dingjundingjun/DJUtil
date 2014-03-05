@@ -71,6 +71,15 @@ public class StrokeView extends View
     private final int RECONGNITION_SLEEP = 1000;
     private RecognitionListerner mRecognitionListerner;
     private List<String> mResult = new ArrayList<String>();
+    /**中英文单字符识别*/
+    public static int HWRC_CHS_SINGLE = 1;   
+    /**中文短句识别*/
+    public static int HWRC_CHS_SENTENCE = 2;
+    /**西文单词识别*/
+    public static int HWRC_LATIN_WORD = 3;
+    /**GB18030*/
+    public static long  ALC_GB18030 = 0x0000000F;
+    public static long ALC_ALPHA = 0x00000600;
 	public StrokeView(Context c, int width, int height) {
         super(c);
         mContext = c;
@@ -460,7 +469,11 @@ public class StrokeView extends View
 //		}
 		return recognition(mRecognition);
 	}
+	/**本地方法*/
 	public native byte[] recognition(short p[]);
+	public native void nativeSetRecogModeChi();
+	public native void nativeSetRecogModeEng();
+	public native void nativeSetRecogModeAll();
 	
 	/**1秒无超做则判断为需要识别*/
 	public class RecognitionHandler extends Handler
@@ -489,6 +502,21 @@ public class StrokeView extends View
 	public void setRecognitionListerner(RecognitionListerner listener)
 	{
 		mRecognitionListerner = listener;
+	}
+	
+	public void setRecogRangeCHI()
+	{
+		nativeSetRecogModeChi();
+	}
+	
+	public void setRecogModeEng()
+	{
+		nativeSetRecogModeEng();
+	}
+	
+	public void setRecogModeAll()
+	{
+		nativeSetRecogModeAll();
 	}
 	
 	public interface RecognitionListerner

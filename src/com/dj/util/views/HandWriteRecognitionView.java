@@ -49,6 +49,7 @@ public class HandWriteRecognitionView extends RelativeLayout
 				this.removeAllViews();
 				mStrokeView = new StrokeView(mContext, mWidth, mHeight);
 				mStrokeView.setRecognitionListerner(mRecognitionListerner);
+				mStrokeView.setRecogModeEng();
 				this.addView(mStrokeView);
 			}
 		}

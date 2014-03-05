@@ -8,3 +8,7 @@ void RecogCS( short *pnPoint );
 char* TestCSAPI();
 char* CSAPI(short *pnPoint);
 int getCharLen(char *p);
+void init();
+void setRecogModeEng();
+void setRecogModeAll();
+void setRecogModeChi();
