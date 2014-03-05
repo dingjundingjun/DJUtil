@@ -23,7 +23,8 @@ public class Util
 	{ R.string.qrcode, R.string.action_qrcode },
 	{ R.string.rotate_layout, R.string.action_rotate_layout },
 	{ R.string.animation_grid, R.string.action_animation_grid },
-	{ R.string.handwrite_recognition, R.string.action_handwrite_recognition }};
+	{ R.string.handwrite_recognition, R.string.action_handwrite_recognition },
+	{ R.string.camera_use_demo, R.string.action_camera_use_demo}};
 	/**
 	 * 判断是横屏还是竖屏
 	 * @param context
