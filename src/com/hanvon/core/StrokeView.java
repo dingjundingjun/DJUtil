@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dj.util.Util;
 import com.hanvon.core.HWColorPaint;
 import com.hanvon.core.StrokeCollection;
 
@@ -526,11 +526,55 @@ public class StrokeView extends View
 	
 	public void toRecognition()
 	{
-		Util.getUCSString(recognition(mRecognition),mResult);
+		getUCSString(recognition(mRecognition),mResult);
 		/*String str = "";
 		for(int i = 0;i < mResult.size();i++)
 		{
 			str += mResult.get(i) + " ";
 		}*/
+	}
+	
+	/**
+	 * 解析编码，解析出中文，存成列表
+	 * @param b
+	 * @param result
+	 */
+	public static void getUCSString(byte b[],List<String> result)
+	{
+		result.clear();
+		byte[] tempB = new byte[2];
+		StringBuffer resultStr = new StringBuffer();
+		for(int i= 0;i<1024;i++)
+		{
+			String tempStr = "";
+			if(i%2 == 0)
+			{
+				
+				if(!(b[i] == 0 && b[i+1] == 0))
+				{
+					try
+					{
+						tempB[0] = b[i + 1];
+						tempB[1] = b[i];
+						tempStr = new String(tempB,"ucs-2");
+						resultStr.append(tempStr);
+					} catch (UnsupportedEncodingException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					
+					String str = new String(resultStr);
+					result.add(str);
+					resultStr = new StringBuffer("");
+				}
+			}
+			if(b[i] == 0 && b[i+1] == 0 && b[i+2] == 0 && b[i + 3] == 0)
+			{
+				break;
+			}
+		}
 	}
 }

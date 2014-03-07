@@ -6,7 +6,6 @@ import com.hanvon.core.StrokeView;
 import com.hanvon.core.StrokeView.RecognitionHandler;
 import com.hanvon.core.StrokeView.RecognitionListerner;
 
-import jding.debug.JDingDebug;
 import android.content.Context;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -22,6 +21,10 @@ public class HandWriteRecognitionView extends RelativeLayout
 	private StrokeView mStrokeView = null;
 	private Context mContext;
 	private RecognitionListerner mRecognitionListerner;
+	public static final int RECOGNITION_CHI = 0;
+	public static final int RECOGNITION_ENG = 1;
+	public static final int RECOGNITION_ALL = 2;
+	private int mMode = 0;
 	public HandWriteRecognitionView(Context context, AttributeSet attrs,
 			int defStyle)
 	{
@@ -44,12 +47,25 @@ public class HandWriteRecognitionView extends RelativeLayout
 			Log.d(TAG, "onLayout: 1111111111111111111111111");
 			mWidth = r - l;
 			mHeight = b - t;
+			if(mContext == null)
+				return;
 			if(mStrokeView == null)
 			{
 				this.removeAllViews();
 				mStrokeView = new StrokeView(mContext, mWidth, mHeight);
 				mStrokeView.setRecognitionListerner(mRecognitionListerner);
-				mStrokeView.setRecogModeEng();
+				if(mMode == RECOGNITION_CHI)
+				{
+					mStrokeView.setRecogRangeCHI();
+				}
+				else if(mMode == RECOGNITION_ENG)
+				{
+					mStrokeView.setRecogModeEng();
+				}
+				else if(mMode == RECOGNITION_ALL)
+				{
+					mStrokeView.setRecogModeAll();
+				}
 				this.addView(mStrokeView);
 			}
 		}
@@ -91,5 +107,25 @@ public class HandWriteRecognitionView extends RelativeLayout
 			RecognitionListerner listener)
 	{
 		mRecognitionListerner = listener;
+	}
+	
+	public void setMode(int m)
+	{
+		mMode = m;
+		if(mStrokeView != null)
+		{
+			if(mMode == RECOGNITION_CHI)
+			{
+				mStrokeView.setRecogRangeCHI();
+			}
+			else if(mMode == RECOGNITION_ENG)
+			{
+				mStrokeView.setRecogModeEng();
+			}
+			else if(mMode == RECOGNITION_ALL)
+			{
+				mStrokeView.setRecogModeAll();
+			}
+		}
 	}
 }

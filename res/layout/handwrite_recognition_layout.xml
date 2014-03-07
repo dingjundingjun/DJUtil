@@ -21,15 +21,50 @@
             android:layout_height="wrap_content"
             android:text="测试"
             />
-        <EditText 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edittext"
-            />
     </LinearLayout>
-    <com.dj.util.views.HandWriteRecognitionView
+    <LinearLayout 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/handwriterecognition"
-        />
+        android:layout_height="300dip"
+        android:orientation="horizontal"
+        >
+        <RelativeLayout 
+            android:layout_width="700dip"
+            android:layout_height="match_parent"
+            >
+            <EditText 
+                android:id="@+id/edittext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+            <com.dj.util.views.HandWriteRecognitionView
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	android:id="@+id/handwriterecognition"
+        	/>
+        </RelativeLayout>
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <Button 
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="delete"
+                />
+            <Button 
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="search"
+                />
+            <Button 
+                android:id="@+id/btn_keyboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="keyboard"
+                />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
