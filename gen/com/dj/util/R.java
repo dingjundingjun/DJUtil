@@ -26,17 +26,19 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int ImageView01=0x7f080017;
-        public static final int RelativeLayout01=0x7f080016;
-        public static final int action_settings=0x7f08001a;
+        public static final int ImageView01=0x7f080019;
+        public static final int RelativeLayout01=0x7f080018;
+        public static final int action_settings=0x7f08001c;
         public static final int btn_clear=0x7f08000d;
         public static final int btn_delete=0x7f080011;
+        public static final int btn_edit_normal=0x7f080014;
+        public static final int btn_handwrite=0x7f080015;
         public static final int btn_keyboard=0x7f080013;
         public static final int btn_search=0x7f080012;
         public static final int btn_start_animation=0x7f080008;
         public static final int btn_start_relay=0x7f080009;
         public static final int btn_test=0x7f08000e;
-        public static final int centerView=0x7f080018;
+        public static final int centerView=0x7f08001a;
         public static final int chooselist=0x7f080000;
         public static final int dragviews=0x7f080007;
         public static final int edittext=0x7f08000f;
@@ -45,14 +47,14 @@ public final class R {
         public static final int leftanimation=0x7f080002;
         public static final int main_layout=0x7f080006;
         public static final int main_view=0x7f080004;
-        public static final int name=0x7f080014;
+        public static final int name=0x7f080016;
         public static final int oprate_systemui=0x7f080005;
         public static final int rightanimation=0x7f080003;
-        public static final int sfvCamera=0x7f080015;
+        public static final int sfvCamera=0x7f080017;
         public static final int speed=0x7f08000a;
         public static final int testlayout=0x7f080001;
         public static final int text=0x7f08000c;
-        public static final int txtScanResult=0x7f080019;
+        public static final int txtScanResult=0x7f08001b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

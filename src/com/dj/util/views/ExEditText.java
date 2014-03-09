@@ -1,6 +1,5 @@
 package com.dj.util.views;
 
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,34 +10,52 @@ import android.widget.EditText;
 
 public class ExEditText extends EditText
 {
-	private boolean bHandWrite;
-	private InputConnection mInputConnection;
+	private boolean bHandWrite = true;
+
 	public ExEditText(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
+        this.setFocusable(true);
+        this.setFocusableInTouchMode(true);
 	}
 
-	@Override
-	public InputConnection onCreateInputConnection(EditorInfo outAttrs) 
-	{
-		if(bHandWrite)
-		{
-			mInputConnection = new MyConnection(this, false);
-		}
-		return mInputConnection;
-	}
-	
-public class MyConnection extends BaseInputConnection 
-{
-		public MyConnection(View targetView, boolean fullEditor) {
-			super(targetView, fullEditor);
-		}
-
-		@Override
-		public boolean commitText(CharSequence text, int newCursorPosition) {
-			
-			return super.commitText(text, newCursorPosition);
-		}
-	}
+	// 往文本框中添加内容 
+    public void addString(String sequence) {
+        int index = getEditSelection();// 光标的位置
+        if (index < 0 || index >= getEditTextViewString().length()) {
+            append(sequence);
+        } else {
+            getEditableText().insert(index, sequence);// 光标所在位置插入文字
+        }
+    }
+ 
+    // 获取光标当前位置
+    public int getEditSelection() {
+        return getSelectionStart();
+    }
+ 
+    // 获取文本框的内容
+    public String getEditTextViewString() {
+        return getText().toString();
+    }
+ 
+    // 清除文本框中的内容
+    public void clearText() {
+        getText().clear();
+    }
+ 
+    // 删除指定位置的字符
+    public void deleteEditValue(int index) {
+        getText().delete(index - 1, index);
+    }
+ 
+    // 设置光标位置
+    public void setEditSelectionLoc(int index) {
+        setSelection(index);
+    }
+ 
+    // 判断是否是数字
+    public static boolean isNum(String str) {
+        return str.matches("([0-9]+)?)$");
+    }
 }

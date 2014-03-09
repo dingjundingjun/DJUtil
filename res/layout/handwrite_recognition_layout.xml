@@ -31,10 +31,11 @@
             android:layout_width="700dip"
             android:layout_height="match_parent"
             >
-            <EditText 
+            <com.dj.util.views.ExEditText 
                 android:id="@+id/edittext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="gone"
                 />
             <com.dj.util.views.HandWriteRecognitionView
         	android:layout_width="match_parent"
@@ -64,6 +65,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="keyboard"
+                />
+            <Button 
+                android:id="@+id/btn_edit_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_edit_normal"
+                />
+            <Button 
+                android:id="@+id/btn_handwrite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_handwrite"
                 />
         </LinearLayout>
     </LinearLayout>

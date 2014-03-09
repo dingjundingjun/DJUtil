@@ -28,9 +28,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
-public class StrokeView extends View
+public class StrokeView extends EditText
 {
 	private final String TAG = "StrokeView";
 	//画笔迹的Bitmap

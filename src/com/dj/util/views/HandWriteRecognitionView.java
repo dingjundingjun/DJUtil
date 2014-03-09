@@ -2,6 +2,8 @@ package com.dj.util.views;
 
 import java.util.List;
 
+import jding.debug.JDingDebug;
+
 import com.hanvon.core.StrokeView;
 import com.hanvon.core.StrokeView.RecognitionHandler;
 import com.hanvon.core.StrokeView.RecognitionListerner;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 public class HandWriteRecognitionView extends RelativeLayout
@@ -25,6 +29,7 @@ public class HandWriteRecognitionView extends RelativeLayout
 	public static final int RECOGNITION_ENG = 1;
 	public static final int RECOGNITION_ALL = 2;
 	private int mMode = 0;
+	private ExEditText mExEditText;
 	public HandWriteRecognitionView(Context context, AttributeSet attrs,
 			int defStyle)
 	{
@@ -127,5 +132,41 @@ public class HandWriteRecognitionView extends RelativeLayout
 				mStrokeView.setRecogModeAll();
 			}
 		}
+		/*mStrokeView.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				JDingDebug.printfD(TAG, "setOnClickListenersetOnClickListenersetOnClickListener          ");
+				mExEditText.performClick();
+			}
+		});*/
+	}
+
+
+	/*@Override
+	public boolean dispatchTouchEvent(MotionEvent ev)
+	{
+		switch(ev.getAction())
+		{
+			case MotionEvent.ACTION_DOWN:
+			{
+				return false;
+			}
+			case MotionEvent.ACTION_MOVE:
+			{
+				return super.dispatchTouchEvent(ev);
+			}
+			case MotionEvent.ACTION_UP:
+			{
+				break;
+			}
+		}
+		return super.dispatchTouchEvent(ev);
+	}
+	*/
+	public void setEditText(ExEditText edit)
+	{
+		mExEditText = edit;
 	}
 }
